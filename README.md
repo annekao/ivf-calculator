@@ -117,12 +117,7 @@ Calculate IVF success probability.
 **Response:**
 ```json
 {
-  "cumulativeChancePercent": 37.5,
-  "notes": [
-    "Calculations are based on CDC statistical models for IVF success rates.",
-    "Consult a physician for personalized assessment based on your specific medical history.",
-    "Actual success rates may vary based on clinic, specific protocols, and individual factors."
-  ]
+  "cumulativeChancePercent": 37.5
 }
 ```
 
@@ -230,9 +225,13 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - My first task was to try to spin up the app before checking the details of the code
    - Since I'm unfamiliar with Go, I relied on Cursor to resolve errors
    - 1 circular dependency error later and the app is up and running!
-- Type error coming from endpoint, shifted gears togit having Cursor write tests given the 3 examples in the README without giving it the expected answers
+- Type error coming from endpoint, shifted gears to having Cursor write tests given the 3 examples in the README without giving it the expected answers
    - Specific tests are not precise, just vaguely checks if its within "bounds"
+   - Tests had a lot of fluff and logging that I ended up removing since it's not realistically something I would deploy (i.e. checking if it's between 0 and 100)
 - Cursor added an unnecessary "retrievals" (int) field which it reasoned as "The CDC formulas give per-cycle probability. 'Retrievals' computes cumulative probability across multiple cycles using P(at least one success) = 1 - (1 - p)^n."
    - Asked to remove since it is not part of the product brief
+- Added unnecessary 'Notes' to CalculateResponse
+   - Asked to remove since it is not part of the product brief
+   - Kept as CalculateResponse as a struct even though it doesn't need to be since there is only one value
 
 

@@ -52,16 +52,6 @@ export default function CalculatorResult({
         </div>
       </div>
 
-      {result.notes && result.notes.length > 0 && (
-        <div className="mt-4 space-y-2">
-          {result.notes.map((note, index) => (
-            <p key={index} className="text-sm text-gray-600">
-              {note}
-            </p>
-          ))}
-        </div>
-      )}
-
       <div className="mt-4 border-t pt-4">
         <p className="text-xs text-gray-500">
           <strong>Disclaimer:</strong> The information you enter is not stored and is only used to calculate your chances of success. 

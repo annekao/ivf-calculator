@@ -26,8 +26,7 @@ type CalculateRequest struct {
 
 // CalculateResponse represents the response from the calculate endpoint
 type CalculateResponse struct {
-	CumulativeChancePercent float64  `json:"cumulativeChancePercent"`
-	Notes                   []string `json:"notes"`
+	CumulativeChancePercent float64 `json:"cumulativeChancePercent"`
 }
 
 // Formula represents a CDC formula with all its coefficients
@@ -351,11 +350,6 @@ func Calculate(req CalculateRequest) CalculateResponse {
 
 	return CalculateResponse{
 		CumulativeChancePercent: chancePercent,
-		Notes: []string{
-			"Calculations are based on CDC statistical models for IVF success rates.",
-			"Consult a physician for personalized assessment based on your specific medical history.",
-			"Actual success rates may vary based on clinic, specific protocols, and individual factors.",
-		},
 	}
 }
 
@@ -412,10 +406,5 @@ func mockCalculate(req CalculateRequest) CalculateResponse {
 
 	return CalculateResponse{
 		CumulativeChancePercent: chance,
-		Notes: []string{
-			"Calculations are illustrative for this demo and based on simplified calculations.",
-			"Consult a physician for personalized assessment based on your specific medical history.",
-			"Actual success rates may vary based on clinic, specific protocols, and individual factors.",
-		},
 	}
 }

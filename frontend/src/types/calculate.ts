@@ -24,7 +24,6 @@ export interface CalculateRequest {
 
 export interface CalculateResponse {
   cumulativeChancePercent: number
-  notes: string[]
 }
 
 export interface CalculateFormData {

@@ -1,11 +1,11 @@
 package validation
 
 import (
-	"ivf-calculator-backend/internal/http/handlers"
+	"ivf-calculator-backend/internal/calculator"
 )
 
 // ValidateCalculateRequest validates the calculate request and returns errors if any
-func ValidateCalculateRequest(req handlers.CalculateRequest) map[string]string {
+func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string {
 	errors := make(map[string]string)
 
 	if req.Age < 20 || req.Age > 50 {

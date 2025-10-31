@@ -1,6 +1,6 @@
 # IVF Success Calculator
 
-A full-stack application to calculate the chance of having a live birth using in vitro fertilization (IVF). Built with React + TypeScript (frontend) and Go with Gin (backend).
+A full-stack application to calculate the chance of having a live birth using in vitro fertilization (IVF). Built with React + TypeScript (frontend) and Go with Gin (backend). Uses CDC statistical models based on logit regression formulas for accurate IVF success rate calculations.
 
 ## Project Structure
 
@@ -120,7 +120,7 @@ Calculate IVF success probability.
 {
   "cumulativeChancePercent": 37.5,
   "notes": [
-    "Calculations are illustrative for this demo and based on simplified calculations.",
+    "Calculations are based on CDC statistical models for IVF success rates.",
     "Consult a physician for personalized assessment based on your specific medical history.",
     "Actual success rates may vary based on clinic, specific protocols, and individual factors."
   ]
@@ -156,8 +156,8 @@ go build -o server ./cmd/server
 
 ## Notes
 
-- The calculation logic in the backend is a simplified mock for demonstration purposes.
-- In a production implementation, you would integrate with actual CDC data and statistical models.
+- The calculation logic uses CDC statistical models based on logit regression formulas. Formulas are loaded from `backend/internal/calculator/ivf_success_formulas.csv` and selected based on patient parameters (egg source, prior IVF attempts, known infertility reasons).
+- The calculator considers factors including age, BMI, infertility reasons, prior pregnancies, prior live births, and number of retrievals.
 - This tool does not provide medical advice. Always consult with a healthcare provider.
 
 ## License

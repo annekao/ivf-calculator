@@ -10,9 +10,26 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-
-	"ivf-calculator-backend/internal/http/handlers"
 )
+
+// CalculateRequest represents the request body for the calculate endpoint
+type CalculateRequest struct {
+	Age              int      `json:"age" binding:"required"`
+	WeightLbs        int      `json:"weightLbs" binding:"required"`
+	HeightIn         int      `json:"heightIn" binding:"required"`
+	PriorIvfCycles   int      `json:"priorIvfCycles" binding:"required"`
+	PriorPregnancies int      `json:"priorPregnancies" binding:"required"`
+	PriorBirths      int      `json:"priorBirths" binding:"required"`
+	Reasons          []string `json:"reasons" binding:"required"`
+	EggSource        string   `json:"eggSource" binding:"required"`
+	Retrievals       int      `json:"retrievals" binding:"required"`
+}
+
+// CalculateResponse represents the response from the calculate endpoint
+type CalculateResponse struct {
+	CumulativeChancePercent float64  `json:"cumulativeChancePercent"`
+	Notes                   []string `json:"notes"`
+}
 
 // Formula represents a CDC formula with all its coefficients
 type Formula struct {
@@ -178,7 +195,7 @@ func getCSVPath() string {
 }
 
 // findMatchingFormula selects the appropriate formula based on patient parameters
-func findMatchingFormula(req handlers.CalculateRequest) *Formula {
+func findMatchingFormula(req CalculateRequest) *Formula {
 	usingOwnEggs := req.EggSource == "own"
 	attemptedIVFPreviously := req.PriorIvfCycles > 0
 	
@@ -260,7 +277,7 @@ func (f *Formula) getPriorLiveBirthsValue(count int) float64 {
 }
 
 // Calculate performs IVF success rate calculation using CDC formulas
-func Calculate(req handlers.CalculateRequest) handlers.CalculateResponse {
+func Calculate(req CalculateRequest) CalculateResponse {
 	// If no formulas loaded, fall back to mock calculation
 	if len(formulas) == 0 {
 		return mockCalculate(req)
@@ -337,7 +354,7 @@ func Calculate(req handlers.CalculateRequest) handlers.CalculateResponse {
 		chancePercent = 95.0
 	}
 
-	return handlers.CalculateResponse{
+	return CalculateResponse{
 		CumulativeChancePercent: chancePercent,
 		Notes: []string{
 			"Calculations are based on CDC statistical models for IVF success rates.",
@@ -365,7 +382,7 @@ func ternary(condition bool, trueVal, falseVal float64) float64 {
 }
 
 // mockCalculate is the fallback calculation if formulas aren't loaded
-func mockCalculate(req handlers.CalculateRequest) handlers.CalculateResponse {
+func mockCalculate(req CalculateRequest) CalculateResponse {
 	// Base chance percentage
 	baseChance := 45.0
 
@@ -401,7 +418,7 @@ func mockCalculate(req handlers.CalculateRequest) handlers.CalculateResponse {
 		chance = 75.0
 	}
 
-	return handlers.CalculateResponse{
+	return CalculateResponse{
 		CumulativeChancePercent: chance,
 		Notes: []string{
 			"Calculations are illustrative for this demo and based on simplified calculations.",

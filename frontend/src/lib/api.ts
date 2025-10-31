@@ -15,7 +15,7 @@ export async function calculate(
 
   if (!response.ok) {
     const error = await response.json()
-    throw new Error(error.errors ? JSON.stringify(error.errors) : 'Request failed')
+    throw new Error(error.details ? JSON.stringify(error.details) : 'Request failed')
   }
 
   return response.json()

@@ -8,7 +8,6 @@ export default function App() {
   const [result, setResult] = useState<CalculateResponse | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [retrievals, setRetrievals] = useState(1)
 
   const handleSubmit = async (formData: CalculateFormData) => {
     setIsLoading(true)
@@ -24,40 +23,13 @@ export default function App() {
         priorBirths: Number(formData.priorBirths),
         reasons: formData.reasons,
         eggSource: formData.eggSource,
-        retrievals: formData.retrievals,
       }
 
       const response = await calculate(request)
       setResult(response)
-      setRetrievals(request.retrievals)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
       setResult(null)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleRetrievalsChange = async (newRetrievals: number) => {
-    if (!result || isLoading) return
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      // For demo purposes, we'll just adjust the result client-side
-      // In a real implementation, you'd make a new API call with the updated retrievals
-      // For now, we'll simulate by adjusting the percentage
-      const adjustedChance = result.cumulativeChancePercent + (newRetrievals - retrievals) * 5
-      const clampedChance = Math.max(1, Math.min(75, adjustedChance))
-      
-      setResult({
-        ...result,
-        cumulativeChancePercent: clampedChance,
-      })
-      setRetrievals(newRetrievals)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -88,8 +60,6 @@ export default function App() {
               result={result}
               isLoading={isLoading}
               error={error}
-              retrievals={retrievals}
-              onRetrievalsChange={handleRetrievalsChange}
             />
           </section>
         </div>

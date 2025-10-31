@@ -110,8 +110,7 @@ Calculate IVF success probability.
   "priorPregnancies": 0,
   "priorBirths": 0,
   "reasons": ["male_factor", "unexplained"],
-  "eggSource": "own",
-  "retrievals": 1
+  "eggSource": "own"
 }
 ```
 
@@ -136,7 +135,6 @@ Calculate IVF success probability.
 - `priorBirths`: 0-2
 - `reasons`: Array of valid reason strings (at least one required)
 - `eggSource`: "own" or "donor"
-- `retrievals`: 1-3
 
 ## Development
 
@@ -153,6 +151,65 @@ npm run build
 cd backend
 go build -o server ./cmd/server
 ```
+
+## Testing
+
+The backend includes comprehensive tests for the calculator using CDC formulas. The test suite covers multiple scenarios and validates formula selection and calculation accuracy.
+
+### Running Tests
+
+**Run all tests:**
+```bash
+cd backend
+go test ./internal/calculator -v
+```
+
+**Run specific test scenarios:**
+```bash
+# Scenario 1: Own eggs, no prior IVF, known reason (endometriosis + ovulatory disorder)
+go test ./internal/calculator -v -run TestCalculate_OwnEggs_NoPriorIVF_KnownReason_Scenario1
+
+# Scenario 2: Own eggs, no prior IVF, unknown reason
+go test ./internal/calculator -v -run TestCalculate_OwnEggs_NoPriorIVF_UnknownReason_Scenario2
+
+# Scenario 3: Own eggs, prior IVF, known reason (tubal factor + diminished ovarian reserve)
+go test ./internal/calculator -v -run TestCalculate_OwnEggs_PriorIVF_KnownReason_Scenario3
+
+# Run comparison test (all scenarios together)
+go test ./internal/calculator -v -run TestAllScenarios_Comparison
+
+# Test formula loading
+go test ./internal/calculator -v -run TestFormulaLoading
+
+# Test formula matching logic
+go test ./internal/calculator -v -run TestFindMatchingFormula
+```
+
+### Test Coverage
+
+The test suite includes:
+
+1. **Scenario Tests**: Tests for three specific patient scenarios:
+   - Own eggs, no prior IVF attempts, known infertility reasons
+   - Own eggs, no prior IVF attempts, unknown infertility reasons
+   - Own eggs, prior IVF attempts, known infertility reasons
+
+2. **Formula Matching Tests**: Validates that the correct CDC formula is selected based on:
+   - Egg source (own vs donor)
+   - Prior IVF attempts
+   - Whether infertility reason is known
+
+3. **Formula Loading Tests**: Verifies that formulas are successfully loaded from the CSV file
+
+4. **Result Validation**: Ensures calculated success rates are within expected bounds (0.1% - 95%)
+
+5. **Comparison Tests**: Runs all scenarios together to compare results
+
+Each test validates that:
+- The calculation produces a valid result
+- The correct formula is selected for the given patient parameters
+- Results are within reasonable probability bounds
+- The calculation uses actual CDC formula coefficients
 
 ## Notes
 
@@ -173,4 +230,9 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - My first task was to try to spin up the app before checking the details of the code
    - Since I'm unfamiliar with Go, I relied on Cursor to resolve errors
    - 1 circular dependency error later and the app is up and running!
-   
+- Type error coming from endpoint, shifted gears togit having Cursor write tests given the 3 examples in the README without giving it the expected answers
+   - Specific tests are not precise, just vaguely checks if its within "bounds"
+- Cursor added an unnecessary "retrievals" (int) field which it reasoned as "The CDC formulas give per-cycle probability. 'Retrievals' computes cumulative probability across multiple cycles using P(at least one success) = 1 - (1 - p)^n."
+   - Asked to remove since it is not part of the product brief
+
+

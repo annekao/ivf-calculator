@@ -37,8 +37,7 @@ func TestCalculate_OwnEggs_NoPriorIVF_KnownReason_Scenario1(t *testing.T) {
 			"endometriosis",
 			"ovulatory_disorder",
 		},
-		EggSource:  "own", // TRUE
-		Retrievals: 1,
+		EggSource: "own", // TRUE
 	}
 
 	result := Calculate(req)
@@ -79,9 +78,8 @@ func TestCalculate_OwnEggs_NoPriorIVF_UnknownReason_Scenario2(t *testing.T) {
 		PriorIvfCycles:   0, // FALSE - did not previously attempt IVF
 		PriorPregnancies: 1,
 		PriorBirths:      1,
-		Reasons:          []string{"unknown"}, // Reason is unknown (not yet determined)
-		EggSource:        "own",                // TRUE
-		Retrievals:       1,
+		Reasons:   []string{"unknown"}, // Reason is unknown (not yet determined)
+		EggSource: "own",                // TRUE
 	}
 
 	result := Calculate(req)
@@ -123,8 +121,7 @@ func TestCalculate_OwnEggs_PriorIVF_KnownReason_Scenario3(t *testing.T) {
 			"tubal_factor",
 			"diminished_ovarian_reserve",
 		},
-		EggSource:  "own", // TRUE
-		Retrievals: 1,
+		EggSource: "own", // TRUE
 	}
 
 	result := Calculate(req)
@@ -159,9 +156,8 @@ func TestAllScenarios_Comparison(t *testing.T) {
 		PriorIvfCycles:   0,
 		PriorPregnancies: 1,
 		PriorBirths:      1,
-		Reasons:          []string{"endometriosis", "ovulatory_disorder"},
-		EggSource:        "own",
-		Retrievals:       1,
+		Reasons:   []string{"endometriosis", "ovulatory_disorder"},
+		EggSource: "own",
 	}
 
 	// Scenario 2: Own eggs, no prior IVF, unknown reason
@@ -172,9 +168,8 @@ func TestAllScenarios_Comparison(t *testing.T) {
 		PriorIvfCycles:   0,
 		PriorPregnancies: 1,
 		PriorBirths:      1,
-		Reasons:          []string{"unknown"},
-		EggSource:        "own",
-		Retrievals:       1,
+		Reasons:   []string{"unknown"},
+		EggSource: "own",
 	}
 
 	// Scenario 3: Own eggs, prior IVF, known reason (tubal factor + diminished ovarian reserve)
@@ -185,9 +180,8 @@ func TestAllScenarios_Comparison(t *testing.T) {
 		PriorIvfCycles:   1,
 		PriorPregnancies: 1,
 		PriorBirths:      1,
-		Reasons:          []string{"tubal_factor", "diminished_ovarian_reserve"},
-		EggSource:        "own",
-		Retrievals:       1,
+		Reasons:   []string{"tubal_factor", "diminished_ovarian_reserve"},
+		EggSource: "own",
 	}
 
 	result1 := Calculate(req1)

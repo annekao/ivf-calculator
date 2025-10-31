@@ -4,16 +4,12 @@ interface CalculatorResultProps {
   result: CalculateResponse | null
   isLoading?: boolean
   error?: string | null
-  retrievals: number
-  onRetrievalsChange: (retrievals: number) => void
 }
 
 export default function CalculatorResult({
   result,
   isLoading = false,
   error = null,
-  retrievals,
-  onRetrievalsChange,
 }: CalculatorResultProps) {
   if (isLoading) {
     return (
@@ -46,35 +42,13 @@ export default function CalculatorResult({
 
   return (
     <div className="rounded-lg border p-6">
-      <h2 className="mb-4 text-lg font-medium">Cumulative Chance of Live Birth*</h2>
-      <p className="mb-2 text-xs text-gray-500">* After {retrievals} retrieval{retrievals > 1 ? 's' : ''} and all transfers within 12 months</p>
+      <h2 className="mb-4 text-lg font-medium">Chance of Live Birth</h2>
 
       <div className="mb-6">
         <div className="flex items-baseline gap-2">
           <span className="text-4xl font-bold text-blue-600">
             {result.cumulativeChancePercent.toFixed(1)}%
           </span>
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Explore by retrieval:
-        </label>
-        <div className="flex gap-2">
-          {[1, 2, 3].map((num) => (
-            <button
-              key={num}
-              onClick={() => onRetrievalsChange(num)}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                retrievals === num
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {num} Retrieval{num > 1 ? 's' : ''}
-            </button>
-          ))}
         </div>
       </div>
 

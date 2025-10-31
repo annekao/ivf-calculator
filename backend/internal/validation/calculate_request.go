@@ -36,10 +36,6 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 		errors["eggSource"] = "must be 'own' or 'donor'"
 	}
 
-	if req.Retrievals < 1 || req.Retrievals > 3 {
-		errors["retrievals"] = "must be 1-3"
-	}
-
 	if len(req.Reasons) == 0 {
 		errors["reasons"] = "at least one reason must be selected"
 	}

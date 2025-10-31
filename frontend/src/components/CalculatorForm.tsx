@@ -16,7 +16,6 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
     priorBirths: '',
     reasons: [],
     eggSource: 'own',
-    retrievals: 1,
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
@@ -61,12 +60,6 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
     if (name === 'reasons') {
       if (!Array.isArray(value) || value.length === 0) {
         return 'Please select at least one reason'
-      }
-    }
-    if (name === 'retrievals') {
-      const retrievals = Number(value)
-      if (isNaN(retrievals) || retrievals < 1 || retrievals > 3) {
-        return 'Retrievals must be 1, 2, or 3'
       }
     }
     return undefined
@@ -256,23 +249,6 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
           <option value="donor">Donor eggs</option>
         </select>
         {errors.eggSource && <p className="mt-1 text-sm text-red-600">{errors.eggSource}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="retrievals" className="block text-sm font-medium text-gray-700 mb-1">
-          Number of retrievals (1-3)
-        </label>
-        <select
-          id="retrievals"
-          value={formData.retrievals}
-          onChange={(e) => handleChange('retrievals', Number(e.target.value))}
-          className={`w-full px-3 py-2 border rounded-md ${errors.retrievals ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="1">1 Retrieval</option>
-          <option value="2">2 Retrievals</option>
-          <option value="3">3 Retrievals</option>
-        </select>
-        {errors.retrievals && <p className="mt-1 text-sm text-red-600">{errors.retrievals}</p>}
       </div>
 
       <button

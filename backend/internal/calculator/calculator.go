@@ -22,7 +22,6 @@ type CalculateRequest struct {
 	PriorBirths      int      `json:"priorBirths" binding:"required"`
 	Reasons          []string `json:"reasons" binding:"required"`
 	EggSource        string   `json:"eggSource" binding:"required"`
-	Retrievals       int      `json:"retrievals" binding:"required"`
 }
 
 // CalculateResponse represents the response from the calculate endpoint
@@ -339,12 +338,8 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	// Convert logit to probability
 	probability := 1.0 / (1.0 + math.Exp(-logit))
 
-	// Convert to percentage and apply retrieval multiplier
-	// The formula gives per-cycle probability, so for multiple retrievals:
-	// P(at least one success) = 1 - (1 - p)^n
-	perCycleProb := probability
-	cumulativeProb := 1.0 - math.Pow(1.0-perCycleProb, float64(req.Retrievals))
-	chancePercent := cumulativeProb * 100.0
+	// Convert to percentage
+	chancePercent := probability * 100.0
 
 	// Clamp between 0.1% and 95%
 	if chancePercent < 0.1 {
@@ -392,9 +387,6 @@ func mockCalculate(req CalculateRequest) CalculateResponse {
 		agePenalty = float64(req.Age-30) * 1.2
 	}
 
-	// Retrieval boost: more retrievals generally increase cumulative chance
-	retrievalBoost := float64(req.Retrievals-1) * 5.0
-
 	// Egg source adjustment
 	eggSourceAdjustment := 0.0
 	if req.EggSource == "donor" {
@@ -408,7 +400,7 @@ func mockCalculate(req CalculateRequest) CalculateResponse {
 	pregnancyBoost := float64(req.PriorPregnancies) * 2.0
 
 	// Calculate final chance
-	chance := baseChance - agePenalty + retrievalBoost + eggSourceAdjustment - priorCyclePenalty + pregnancyBoost
+	chance := baseChance - agePenalty + eggSourceAdjustment - priorCyclePenalty + pregnancyBoost
 
 	// Clamp between 1% and 75%
 	if chance < 1.0 {

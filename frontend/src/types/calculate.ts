@@ -20,7 +20,6 @@ export interface CalculateRequest {
   priorBirths: number
   reasons: CalculateReason[]
   eggSource: EggSource
-  retrievals: number
 }
 
 export interface CalculateResponse {
@@ -37,7 +36,6 @@ export interface CalculateFormData {
   priorBirths: string
   reasons: CalculateReason[]
   eggSource: EggSource
-  retrievals: number
 }
 
 export interface FormErrors {
@@ -49,5 +47,4 @@ export interface FormErrors {
   priorBirths?: string
   reasons?: string
   eggSource?: string
-  retrievals?: string
 }

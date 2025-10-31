@@ -163,3 +163,14 @@ go build -o server ./cmd/server
 ## License
 
 This project is a demonstration/take-home assessment and is not intended for production medical use.
+
+
+## Non AI-generated notes 
+
+- Used Cursor and gave it the CDC website and CSV file to code a "simple" Go/React app (used plan mode)
+   - I *didn't* copy the README instructions directly. This was mostly out of curiosity to see how powerful Cursor is with minimal prompting.
+- Removed docker since this is a take-home assignment and doesn't need to be deployed or put in a production environment
+- My first task was to try to spin up the app before checking the details of the code
+   - Since I'm unfamiliar with Go, I relied on Cursor to resolve errors
+   - 1 circular dependency error later and the app is up and running!
+   

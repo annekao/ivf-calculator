@@ -43,13 +43,8 @@ func TestCalculate_OwnEggs_NoPriorIVF_KnownReason_Scenario1(t *testing.T) {
 	result := Calculate(req)
 
 	// Validate that we got a result
-	if result.CumulativeChancePercent <= 0 || result.CumulativeChancePercent > 100 {
-		t.Errorf("Expected cumulative chance between 0 and 100, got %f", result.CumulativeChancePercent)
-	}
-
-	// Verify the calculation is reasonable (should be positive probability)
-	if result.CumulativeChancePercent < 0.1 || result.CumulativeChancePercent > 95.0 {
-		t.Logf("Warning: Result outside expected bounds: %f%%", result.CumulativeChancePercent)
+	if result.CumulativeChancePercent != 62.21 {
+		t.Errorf("Expected cumulative chance to be 62.21, got %f", result.CumulativeChancePercent)
 	}
 
 	t.Logf("Scenario 1 Result: %.2f%% chance of success", result.CumulativeChancePercent)
@@ -81,16 +76,10 @@ func TestCalculate_OwnEggs_NoPriorIVF_UnknownReason_Scenario2(t *testing.T) {
 	result := Calculate(req)
 
 	// Validate that we got a result
-	if result.CumulativeChancePercent <= 0 || result.CumulativeChancePercent > 100 {
-		t.Errorf("Expected cumulative chance between 0 and 100, got %f", result.CumulativeChancePercent)
+	if result.CumulativeChancePercent != 59.83 {
+		t.Errorf("Expected cumulative chance to be 59.83, got %f", result.CumulativeChancePercent)
 	}
 
-	// Verify the calculation is reasonable
-	if result.CumulativeChancePercent < 0.1 || result.CumulativeChancePercent > 95.0 {
-		t.Logf("Warning: Result outside expected bounds: %f%%", result.CumulativeChancePercent)
-	}
-
-	t.ExpectEqual(t, result.CumulativeChancePercent, 59.83)
 	t.Logf("Scenario 2 Result: %.2f%% chance of success", result.CumulativeChancePercent)
 	t.Logf("BMI: %.2f (Weight: %d lbs, Height: %d in)", 22.8, weightLbs, heightIn)
 }
@@ -120,84 +109,12 @@ func TestCalculate_OwnEggs_PriorIVF_KnownReason_Scenario3(t *testing.T) {
 	result := Calculate(req)
 
 	// Validate that we got a result
-	if result.CumulativeChancePercent <= 0 || result.CumulativeChancePercent > 100 {
-		t.Errorf("Expected cumulative chance between 0 and 100, got %f", result.CumulativeChancePercent)
+	if result.CumulativeChancePercent != 40.89 {
+		t.Errorf("Expected cumulative chance to be 40.89, got %f", result.CumulativeChancePercent)
 	}
 
-	// Verify the calculation is reasonable
-	if result.CumulativeChancePercent < 0.1 || result.CumulativeChancePercent > 95.0 {
-		t.Logf("Warning: Result outside expected bounds: %f%%", result.CumulativeChancePercent)
-	}
-
-	t.ExpectEqual(t, result.CumulativeChancePercent, 40.89)
 	t.Logf("Scenario 3 Result: %.2f%% chance of success", result.CumulativeChancePercent)
 	t.Logf("BMI: %.2f (Weight: %d lbs, Height: %d in)", 22.8, weightLbs, heightIn)
-}
-
-// TestAllScenarios runs all three scenarios and compares results
-func TestAllScenarios_Comparison(t *testing.T) {
-	weightLbs, heightIn := getWeightHeightForBMI(22.8)
-
-	// Scenario 1: Own eggs, no prior IVF, known reason (endometriosis + ovulatory disorder)
-	req1 := CalculateRequest{
-		Age:              32,
-		WeightLbs:        weightLbs,
-		HeightIn:         heightIn,
-		PriorIvfCycles:   0,
-		PriorPregnancies: 1,
-		PriorBirths:      1,
-		Reasons:   []string{"endometriosis", "ovulatory_disorder"},
-		EggSource: "own",
-	}
-
-	// Scenario 2: Own eggs, no prior IVF, unknown reason
-	req2 := CalculateRequest{
-		Age:              32,
-		WeightLbs:        weightLbs,
-		HeightIn:         heightIn,
-		PriorIvfCycles:   0,
-		PriorPregnancies: 1,
-		PriorBirths:      1,
-		Reasons:   []string{"unknown"},
-		EggSource: "own",
-	}
-
-	// Scenario 3: Own eggs, prior IVF, known reason (tubal factor + diminished ovarian reserve)
-	req3 := CalculateRequest{
-		Age:              32,
-		WeightLbs:        weightLbs,
-		HeightIn:         heightIn,
-		PriorIvfCycles:   1,
-		PriorPregnancies: 1,
-		PriorBirths:      1,
-		Reasons:   []string{"tubal_factor", "diminished_ovarian_reserve"},
-		EggSource: "own",
-	}
-
-	result1 := Calculate(req1)
-	result2 := Calculate(req2)
-	result3 := Calculate(req3)
-
-	t.Logf("\n=== Comparison of All Scenarios ===")
-	t.Logf("Scenario 1 (Own Eggs, No Prior IVF, Known Reason): %.2f%%", result1.CumulativeChancePercent)
-	t.Logf("Scenario 2 (Own Eggs, No Prior IVF, Unknown Reason): %.2f%%", result2.CumulativeChancePercent)
-	t.Logf("Scenario 3 (Own Eggs, Prior IVF, Known Reason): %.2f%%", result3.CumulativeChancePercent)
-
-	// Validate all results are in valid range
-	if result1.CumulativeChancePercent < 0.1 || result1.CumulativeChancePercent > 95.0 {
-		t.Errorf("Scenario 1 result out of bounds: %f", result1.CumulativeChancePercent)
-	}
-	if result2.CumulativeChancePercent < 0.1 || result2.CumulativeChancePercent > 95.0 {
-		t.Errorf("Scenario 2 result out of bounds: %f", result2.CumulativeChancePercent)
-	}
-	if result3.CumulativeChancePercent < 0.1 || result3.CumulativeChancePercent > 95.0 {
-		t.Errorf("Scenario 3 result out of bounds: %f", result3.CumulativeChancePercent)
-	}
-
-	// All scenarios should produce valid results
-	if result1.CumulativeChancePercent <= 0 || result2.CumulativeChancePercent <= 0 || result3.CumulativeChancePercent <= 0 {
-		t.Error("All scenarios should produce positive success rates")
-	}
 }
 
 // Test that formulas are loaded correctly

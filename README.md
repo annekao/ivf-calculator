@@ -228,10 +228,14 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - Type error coming from endpoint, shifted gears to having Cursor write tests given the 3 examples in the README without giving it the expected answers
    - Specific tests are not precise, just vaguely checks if its within "bounds"
    - Tests had a lot of fluff and logging that I ended up removing since it's not realistically something I would deploy (i.e. checking if it's between 0 and 100)
+   - Removed "Test All Scenarios" as that was redundant
+   - Liked how it tested the correct formula was used
+   - Generally tests are not asserting, but instead throwing errors - unclear if this is Go convention or not
 - Cursor added an unnecessary "retrievals" (int) field which it reasoned as "The CDC formulas give per-cycle probability. 'Retrievals' computes cumulative probability across multiple cycles using P(at least one success) = 1 - (1 - p)^n."
    - Asked to remove since it is not part of the product brief
 - Added unnecessary 'Notes' to CalculateResponse
    - Asked to remove since it is not part of the product brief
    - Kept as CalculateResponse as a struct even though it doesn't need to be since there is only one value
+
 
 

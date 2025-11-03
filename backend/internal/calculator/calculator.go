@@ -71,8 +71,7 @@ var formulas []Formula
 // init loads the formulas from CSV on package initialization
 func init() {
 	if err := loadFormulas(); err != nil {
-		// Log error but don't fail - will fall back to mock calculation
-		fmt.Printf("Warning: Failed to load formulas: %v\n", err)
+		fmt.Errorf("Failed to load formulas: %v", err)
 	}
 }
 
@@ -249,9 +248,7 @@ func findMatchingFormula(req CalculateRequest) *Formula {
 
 // calculateBMI computes BMI from weight in pounds and height in inches
 func calculateBMI(weightLbs, heightIn int) float64 {
-	weightKg := float64(weightLbs) * 0.453592
-	heightM := float64(heightIn) * 0.0254
-	return weightKg / (heightM * heightM)
+	return float64(weightLbs) / math.Pow(float64(heightIn), 2.0) * 703
 }
 
 // getPriorPregnanciesValue returns the coefficient for prior pregnancies
@@ -276,16 +273,15 @@ func (f *Formula) getPriorLiveBirthsValue(count int) float64 {
 
 // Calculate performs IVF success rate calculation using CDC formulas
 func Calculate(req CalculateRequest) CalculateResponse {
-	// If no formulas loaded, fall back to mock calculation
+	// If no formulas loaded, fail fast
 	if len(formulas) == 0 {
-		return mockCalculate(req)
+		fmt.Errorf("No formulas loaded")
 	}
 
 	// Find matching formula
 	formula := findMatchingFormula(req)
 	if formula == nil {
-		// If no matching formula, fall back to mock
-		return mockCalculate(req)
+		fmt.Errorf("No matching formula found")
 	}
 
 	// Calculate BMI
@@ -295,14 +291,14 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	// Calculate logit using the formula
 	logit := formula.Intercept
 
-	// Age terms: linear + power terms
-	// Typically polynomial regression uses (age - center)^2 for quadratic terms
-	agePower := math.Pow(age-formula.AgePowerFactor, 2.0)
+	// Age is calculated with a linear component as well as a polynomial component:
+	// formula_age_linear_coefficient x user_age + formula_age_power_coefficient x (user_age ^ formula_age_power_factor)
+	agePower := math.Pow(age, formula.AgePowerFactor)
 	logit += formula.AgeLinearCoeff*age + formula.AgePowerCoeff*agePower
 
-	// BMI terms: linear + power terms
-	// BMI power factor is 2.0 for all formulas, so use (bmi - 2)^2
-	bmiPower := math.Pow(bmi-formula.BMIPowerFactor, 2.0)
+	// BMI is calculated with a linear component as well as a polynomial component:
+	// formula_bmi_linear_coefficient x user_bmi + formula_bmi_power_coefficient x (user_bmi ^ formula_bmi_power_factor)
+	bmiPower := math.Pow(bmi, formula.BMIPowerFactor)
 	logit += formula.BMILinearCoeff*bmi + formula.BMIPowerCoeff*bmiPower
 
 	// Infertility factor terms
@@ -338,15 +334,7 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	probability := 1.0 / (1.0 + math.Exp(-logit))
 
 	// Convert to percentage
-	chancePercent := probability * 100.0
-
-	// Clamp between 0.1% and 95%
-	if chancePercent < 0.1 {
-		chancePercent = 0.1
-	}
-	if chancePercent > 95.0 {
-		chancePercent = 95.0
-	}
+	chancePercent := math.Ceil(probability * 10000.0) / 100.0
 
 	return CalculateResponse{
 		CumulativeChancePercent: chancePercent,
@@ -368,43 +356,4 @@ func ternary(condition bool, trueVal, falseVal float64) float64 {
 		return trueVal
 	}
 	return falseVal
-}
-
-// mockCalculate is the fallback calculation if formulas aren't loaded
-func mockCalculate(req CalculateRequest) CalculateResponse {
-	// Base chance percentage
-	baseChance := 45.0
-
-	// Age adjustment: decrease chance as age increases above 30
-	agePenalty := 0.0
-	if req.Age > 30 {
-		agePenalty = float64(req.Age-30) * 1.2
-	}
-
-	// Egg source adjustment
-	eggSourceAdjustment := 0.0
-	if req.EggSource == "donor" {
-		eggSourceAdjustment = 10.0 // Donor eggs typically have higher success rates
-	}
-
-	// Prior IVF cycles adjustment (negative impact)
-	priorCyclePenalty := float64(req.PriorIvfCycles) * 3.0
-
-	// Prior pregnancies adjustment (positive impact)
-	pregnancyBoost := float64(req.PriorPregnancies) * 2.0
-
-	// Calculate final chance
-	chance := baseChance - agePenalty + eggSourceAdjustment - priorCyclePenalty + pregnancyBoost
-
-	// Clamp between 1% and 75%
-	if chance < 1.0 {
-		chance = 1.0
-	}
-	if chance > 75.0 {
-		chance = 75.0
-	}
-
-	return CalculateResponse{
-		CumulativeChancePercent: chance,
-	}
 }

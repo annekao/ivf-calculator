@@ -84,10 +84,16 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
     setErrors((prev) => ({ ...prev, [name]: error }))
   }
 
-  const handleReasonToggle = (reason: CalculateReason) => {
-    const newReasons = formData.reasons.includes(reason)
-      ? formData.reasons.filter((r) => r !== reason)
+  const handleReasonToggle = (reason: CalculateReason, or?: boolean) => {
+    let newReasons
+    if (or) {
+      newReasons = [reason]
+    } else {
+      newReasons = formData.reasons.includes(reason)
+      ? formData.reasons.filter((r) => r !== reason )
       : [...formData.reasons, reason]
+      newReasons = newReasons.filter((r) => !['unexplained', 'unknown'].includes(r))
+    }
     handleChange('reasons', newReasons)
   }
 
@@ -111,7 +117,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
     onSubmit(formData)
   }
 
-  const reasons: { value: CalculateReason; label: string }[] = [
+  const reasons: { value: CalculateReason; label: string, or?: boolean }[] = [
     { value: 'male_factor_infertility', label: 'Male factor infertility' },
     { value: 'endometriosis', label: 'Endometriosis' },
     { value: 'tubal_factor', label: 'Tubal factor' },
@@ -119,8 +125,8 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
     { value: 'diminished_ovarian_reserve', label: 'Diminished ovarian reserve' },
     { value: 'uterine_factor', label: 'Uterine factor' },
     { value: 'other', label: 'Other reason' },
-    { value: 'unexplained', label: 'Unexplained (Idiopathic) infertility' },
-    { value: 'unknown', label: "I don't know/no reason" },
+    { value: 'unexplained', label: 'Unexplained (Idiopathic) infertility', or: true },
+    { value: 'unknown', label: "I don't know/no reason", or: true },
   ]
 
   return (
@@ -275,15 +281,18 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
         </label>
         <div className="space-y-2">
           {reasons.map((reason) => (
-            <label key={reason.value} className="flex items-center">
-              <input
-                type="checkbox"
-                checked={formData.reasons.includes(reason.value)}
-                onChange={() => handleReasonToggle(reason.value)}
-                className="mr-2"
-              />
-              <span className="text-sm">{reason.label}</span>
-            </label>
+            <div>
+              {reason.or && <div className="mb-2">(or)</div>}
+              <label key={reason.value} className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={formData.reasons.includes(reason.value)}
+                  onChange={() => handleReasonToggle(reason.value, reason.or)}
+                  className="mr-2"
+                />
+                <span className="text-sm">{reason.label}</span>
+              </label>
+              </div>
           ))}
         </div>
         {errors.reasons && <p className="mt-1 text-sm text-red-600">{errors.reasons}</p>}

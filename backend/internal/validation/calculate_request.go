@@ -51,6 +51,14 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 		errors["reasons"] = "at least one reason must be selected"
 	}
 
+	if req.Reasons.contains("unexplained") && len(req.Reasons) != 1 {
+		errors["reasons"] = "'Unexplained (Idiopathic) infertility' must be selected by itself"
+	}
+
+	if req.Reasons.contains("unknown") && len(req.Reasons) != 1 {
+		errors["reasons"] = "'I don't know/no reason' must be selected by itself"
+	}
+
 	validReasons := map[string]bool{
 		"male_factor_infertility":  true,
 		"endometriosis":            true,

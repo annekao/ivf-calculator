@@ -253,14 +253,20 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
         {errors.priorPregnancies && <p className="mt-1 text-sm text-red-600">{errors.priorPregnancies}</p>}
       </div>
 
-      <div>
-
+      {!['', '0'].includes(formData.priorPregnancies) && (<div>
         <label htmlFor="priorBirths" className="block text-sm font-medium text-gray-700 mb-1">
           How many prior births have you had?
         </label>
         <div className="space-x-5 flex">
           <label className="flex items-center">
-            <input type="radio" id="priorBirths2" name="priorBirths" value="2" checked={formData.priorBirths === '2'} onChange={(e) => handleChange('priorBirths', e.target.value)} className="mr-2" />
+            <input type="radio" 
+              id="priorBirths2" 
+              name="priorBirths" 
+              value="2" 
+              checked={formData.priorBirths === '2'} 
+              onChange={(e) => handleChange('priorBirths', e.target.value)} 
+              disabled={['1'].includes(formData.priorPregnancies)}
+              className="mr-2" />
             <span className="text-sm">2 or more</span>
           </label>
           <label className="flex items-center">
@@ -273,7 +279,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
           </label>
         </div>
         {errors.priorBirths && <p className="mt-1 text-sm text-red-600">{errors.priorBirths}</p>}
-      </div>
+      </div>)}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">

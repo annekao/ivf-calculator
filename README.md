@@ -231,8 +231,12 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - Change Prior IVF cycles to a string since product brief says that it can be true/false/nan
 - Split out inches into feet and inches
 - Nest IVF cycles q under Egg q
-- Add # of live births constraint
+- Add # of live births constraint / toggling of available options
 - Set up toggling for unexplained/unknown reason
 - Removed Retrievals field (initially wasn't sure why it was added in, but then realized that it was part of the CDC calculation after submitting)
    - Out of scope / no explicit instruction on how to calculate it so I didn't want to just go along with whatever Cursor said
 - Add more tests since examples given only cover the first 3 formulas
+
+### Things I would like to add or spend more time on
+- front-end / e2e testing
+- error-handling testing

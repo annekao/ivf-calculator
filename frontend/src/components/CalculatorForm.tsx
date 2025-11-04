@@ -1,26 +1,29 @@
 import { useState } from 'react'
-import type { CalculateFormData, CalculateReason, EggSource, FormErrors } from '../types/calculate'
+import { eggSources, priorIvfCyclesOptions } from '../types/calculate'
+import type { CalculateFormData, CalculateReason, EggSource, FormErrors, PriorIvfCyclesOption } from '../types/calculate'
 
 interface CalculatorFormProps {
   onSubmit: (data: CalculateFormData) => void
   isSubmitting?: boolean
+
 }
 
 export default function CalculatorForm({ onSubmit, isSubmitting = false }: CalculatorFormProps) {
   const [formData, setFormData] = useState<CalculateFormData>({
     age: '',
     weightLbs: '',
+    heightFt: '',
     heightIn: '',
     priorIvfCycles: '',
     priorPregnancies: '',
     priorBirths: '',
     reasons: [],
-    eggSource: 'own',
+    eggSource: '',
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
 
-  const validateField = (name: keyof CalculateFormData, value: string | number | CalculateReason[] | EggSource): string | undefined => {
+  const validateField = (name: keyof CalculateFormData, value: string | CalculateReason[] | EggSource): string | undefined => {
     if (name === 'age') {
       const age = Number(value)
       if (isNaN(age) || age < 20 || age > 50) {
@@ -33,28 +36,38 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
         return 'Weight must be between 80 and 300 lbs'
       }
     }
+    if (name === 'heightFt') {
+      const heightFt = Number(value)
+      if (isNaN(heightFt) || heightFt < 4 || heightFt > 6) {
+        return 'Height feet must be between 4 and 7 feet'
+      }
+    }
     if (name === 'heightIn') {
-      const height = Number(value)
-      if (isNaN(height) || height < 55 || height > 78) {
-        return 'Height must be between 55 and 78 inches'
+      const heightIn = Number(value)
+      if (isNaN(heightIn) || heightIn < 0 || heightIn > 11) {
+        return 'Height inches must be between 0 and 12 inches'
+      }
+    }
+    if (name === 'eggSource') {
+      if (value === '' || !eggSources.includes(value as EggSource) ) {
+        return 'Please select "My own eggs" or "Donor eggs"'
       }
     }
     if (name === 'priorIvfCycles') {
-      const cycles = Number(value)
-      if (isNaN(cycles) || cycles < 0 || cycles > 3) {
-        return 'Prior IVF cycles must be 0-3'
+      if (!priorIvfCyclesOptions.includes(value as PriorIvfCyclesOption)) {
+        return 'Please select "Yes" or "No"'
       }
     }
     if (name === 'priorPregnancies') {
       const pregnancies = Number(value)
       if (isNaN(pregnancies) || pregnancies < 0 || pregnancies > 2) {
-        return 'Prior pregnancies must be 0, 1, or 2+'
+        return 'Prior pregnancies must be 2+, 1, or None'
       }
     }
     if (name === 'priorBirths') {
       const births = Number(value)
       if (isNaN(births) || births < 0 || births > 2) {
-        return 'Prior births must be 0, 1, or 2+'
+        return 'Prior births must be 2+, 1, or None'
       }
     }
     if (name === 'reasons') {
@@ -65,7 +78,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
     return undefined
   }
 
-  const handleChange = (name: keyof CalculateFormData, value: string | number | CalculateReason[] | EggSource) => {
+  const handleChange = (name: keyof CalculateFormData, value: string | CalculateReason[] | EggSource) => {
     setFormData((prev) => ({ ...prev, [name]: value }))
     const error = validateField(name, value)
     setErrors((prev) => ({ ...prev, [name]: error }))
@@ -99,7 +112,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
   }
 
   const reasons: { value: CalculateReason; label: string }[] = [
-    { value: 'male_factor', label: 'Male factor infertility' },
+    { value: 'male_factor_infertility', label: 'Male factor infertility' },
     { value: 'endometriosis', label: 'Endometriosis' },
     { value: 'tubal_factor', label: 'Tubal factor' },
     { value: 'ovulatory_disorder', label: 'Ovulatory disorder (including PCOS)' },
@@ -145,73 +158,114 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
       </div>
 
       <div>
-        <label htmlFor="heightIn" className="block text-sm font-medium text-gray-700 mb-1">
-          How tall are you? (inches)
-        </label>
-        <input
-          type="number"
-          id="heightIn"
-          min="55"
-          max="78"
-          value={formData.heightIn}
-          onChange={(e) => handleChange('heightIn', e.target.value)}
-          className={`w-full px-3 py-2 border rounded-md ${errors.heightIn ? 'border-red-500' : 'border-gray-300'}`}
-        />
+        <label className="block text-sm font-medium text-gray-700 mb-1">How tall are you?</label>
+        <div className="flex space-x-4">
+          <div className="flex-1">
+            <input
+              type="number"
+              id="heightFeet"
+              min="4"
+              max="6"
+              placeholder="Feet"
+              value={formData.heightFt}
+              onChange={(e) => handleChange('heightFt', e.target.value)}
+              className={`w-full px-3 py-2 border rounded-md ${errors.heightFt ? 'border-red-500' : 'border-gray-300'}`}
+            />
+          </div>
+
+          <div className="flex-1">
+            <input
+              type="number"
+              id="heightInches"
+              min="0"
+              max="11"
+              placeholder="Inches"
+              value={formData.heightIn}
+              onChange={(e) => handleChange('heightIn', e.target.value)}
+              className={`w-full px-3 py-2 border rounded-md ${errors.heightIn ? 'border-red-500' : 'border-gray-300'}`}
+            />
+          </div>
+        </div>
+        {errors.heightFt && <p className="mt-1 text-sm text-red-600">{errors.heightFt}</p>}
         {errors.heightIn && <p className="mt-1 text-sm text-red-600">{errors.heightIn}</p>}
       </div>
 
       <div>
-        <label htmlFor="priorIvfCycles" className="block text-sm font-medium text-gray-700 mb-1">
-          How many times have you used IVF in the past?
+        <label htmlFor="eggSource" className="block text-sm font-medium text-gray-700 mb-1">
+          Do you plan to use your own eggs or donor eggs?
         </label>
-        <select
-          id="priorIvfCycles"
-          value={formData.priorIvfCycles}
-          onChange={(e) => handleChange('priorIvfCycles', e.target.value)}
-          className={`w-full px-3 py-2 border rounded-md ${errors.priorIvfCycles ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="">-- select an option --</option>
-          <option value="0">I've never used IVF</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3 or more</option>
-        </select>
-        {errors.priorIvfCycles && <p className="mt-1 text-sm text-red-600">{errors.priorIvfCycles}</p>}
+        <div className="space-x-5 flex">
+          <label className="flex items-center">
+            <input type="radio" id="eggSourceOwn" name="eggSource" value="own" checked={formData.eggSource === 'own'} onChange={(e) => handleChange('eggSource', e.target.value)} className="mr-2" />
+            <span className="text-sm">My own eggs</span>
+          </label>
+          <label className="flex items-center">
+            <input type="radio" id="eggSourceDonor" name="eggSource" value="donor" checked={formData.eggSource === 'donor'} onChange={(e) => handleChange('eggSource', e.target.value)} className="mr-2" />
+            <span className="text-sm">Donor eggs</span>
+          </label>
+        </div>
+        {errors.eggSource && <p className="mt-1 text-sm text-red-600">{errors.eggSource}</p>}
       </div>
+
+      {formData.eggSource === 'own' && (
+        <div>
+          <label htmlFor="priorIvfCycles" className="block text-sm font-medium text-gray-700 mb-1">
+            Have you used IVF in the past?
+          </label>
+          <div className="space-x-5 flex">
+            <label className="flex items-center">
+              <input type="radio" id="priorIvfCyclesYes" name="priorIvfCycles" value="yes" checked={formData.priorIvfCycles === 'yes'} onChange={(e) => handleChange('priorIvfCycles', e.target.value)} className="mr-2" />
+              <span className="text-sm">Yes</span>
+            </label>
+            <label className="flex items-center">
+              <input type="radio" id="priorIvfCyclesNo" name="priorIvfCycles" value="no" checked={formData.priorIvfCycles === 'no'} onChange={(e) => handleChange('priorIvfCycles', e.target.value)} className="mr-2" />
+              <span className="text-sm">No, I've never used IVF</span>
+            </label>
+          </div>
+          {errors.priorIvfCycles && <p className="mt-1 text-sm text-red-600">{errors.priorIvfCycles}</p>}
+        </div>
+      )}
 
       <div>
         <label htmlFor="priorPregnancies" className="block text-sm font-medium text-gray-700 mb-1">
           How many prior pregnancies have you had?
         </label>
-        <select
-          id="priorPregnancies"
-          value={formData.priorPregnancies}
-          onChange={(e) => handleChange('priorPregnancies', e.target.value)}
-          className={`w-full px-3 py-2 border rounded-md ${errors.priorPregnancies ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="">-- select an option --</option>
-          <option value="0">None</option>
-          <option value="1">1</option>
-          <option value="2">2 or more</option>
-        </select>
+        <div className="space-x-5 flex">
+          <label className="flex items-center">
+            <input type="radio" id="priorPregnancies2" name="priorPregnancies" value="2" checked={formData.priorPregnancies === '2'} onChange={(e) => handleChange('priorPregnancies', e.target.value)} className="mr-2" />
+            <span className="text-sm">2 or more</span>
+          </label>
+          <label className="flex items-center">
+            <input type="radio" id="priorPregnancies1" name="priorPregnancies" value="1" checked={formData.priorPregnancies === '1'} onChange={(e) => handleChange('priorPregnancies', e.target.value)} className="mr-2" />
+            <span className="text-sm">1</span>
+          </label>
+          <label className="flex items-center">
+            <input type="radio" id="priorPregnancies0" name="priorPregnancies" value="0" checked={formData.priorPregnancies === '0'} onChange={(e) => handleChange('priorPregnancies', e.target.value)} className="mr-2" />
+            <span className="text-sm">None</span>
+          </label>
+        </div>
         {errors.priorPregnancies && <p className="mt-1 text-sm text-red-600">{errors.priorPregnancies}</p>}
       </div>
 
       <div>
+
         <label htmlFor="priorBirths" className="block text-sm font-medium text-gray-700 mb-1">
           How many prior births have you had?
         </label>
-        <select
-          id="priorBirths"
-          value={formData.priorBirths}
-          onChange={(e) => handleChange('priorBirths', e.target.value)}
-          className={`w-full px-3 py-2 border rounded-md ${errors.priorBirths ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="">-- select an option --</option>
-          <option value="0">None</option>
-          <option value="1">1</option>
-          <option value="2">2 or more</option>
-        </select>
+        <div className="space-x-5 flex">
+          <label className="flex items-center">
+            <input type="radio" id="priorBirths2" name="priorBirths" value="2" checked={formData.priorBirths === '2'} onChange={(e) => handleChange('priorBirths', e.target.value)} className="mr-2" />
+            <span className="text-sm">2 or more</span>
+          </label>
+          <label className="flex items-center">
+            <input type="radio" id="priorBirths1" name="priorBirths" value="1" checked={formData.priorBirths === '1'} onChange={(e) => handleChange('priorBirths', e.target.value)} className="mr-2" />
+            <span className="text-sm">1</span>
+          </label>
+          <label className="flex items-center">
+            <input type="radio" id="priorBirths0" name="priorBirths" value="0" checked={formData.priorBirths === '0'}  onChange={(e) => handleChange('priorBirths', e.target.value)} className="mr-2" />
+            <span className="text-sm">None</span>
+          </label>
+        </div>
         {errors.priorBirths && <p className="mt-1 text-sm text-red-600">{errors.priorBirths}</p>}
       </div>
 
@@ -233,22 +287,6 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
           ))}
         </div>
         {errors.reasons && <p className="mt-1 text-sm text-red-600">{errors.reasons}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="eggSource" className="block text-sm font-medium text-gray-700 mb-1">
-          Do you plan to use your own eggs or donor eggs?
-        </label>
-        <select
-          id="eggSource"
-          value={formData.eggSource}
-          onChange={(e) => handleChange('eggSource', e.target.value as EggSource)}
-          className={`w-full px-3 py-2 border rounded-md ${errors.eggSource ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="own">My own eggs</option>
-          <option value="donor">Donor eggs</option>
-        </select>
-        {errors.eggSource && <p className="mt-1 text-sm text-red-600">{errors.eggSource}</p>}
       </div>
 
       <button

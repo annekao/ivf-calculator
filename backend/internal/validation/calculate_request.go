@@ -16,12 +16,12 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 		errors["weightLbs"] = "must be between 80 and 300"
 	}
 
-	if req.HeightIn < 55 || req.HeightIn > 78 {
-		errors["heightIn"] = "must be between 55 and 78"
+	if req.HeightFt < 4 || req.HeightFt > 6 {
+		errors["heightFt"] = "must be between 4 and 7"
 	}
 
-	if req.PriorIvfCycles < 0 || req.PriorIvfCycles > 3 {
-		errors["priorIvfCycles"] = "must be 0-3"
+	if req.HeightIn < 0 || req.HeightIn > 11 {
+		errors["heightIn"] = "must be between 0 and 12"
 	}
 
 	if req.PriorPregnancies < 0 || req.PriorPregnancies > 2 {
@@ -32,8 +32,19 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 		errors["priorBirths"] = "must be 0, 1, or 2+"
 	}
 
+	if req.PriorBirths > req.PriorPregnancies {
+		if (errors["priorBirths"] != "") {
+			errors["priorBirths"] += "; "
+		}
+		errors["priorBirths"] += "cannot exceed the number of prior pregnancies (even in the case of twins)"
+	}
+
 	if req.EggSource != "own" && req.EggSource != "donor" {
 		errors["eggSource"] = "must be 'own' or 'donor'"
+	}
+
+	if req.EggSource == "own" && req.PriorIvfCycles == "" {
+		errors["priorIvfCycles"] = "must be 'yes' or 'no' when planning to use 'own' eggs"
 	}
 
 	if len(req.Reasons) == 0 {
@@ -41,7 +52,7 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 	}
 
 	validReasons := map[string]bool{
-		"male_factor":              true,
+		"male_factor_infertility":  true,
 		"endometriosis":            true,
 		"tubal_factor":             true,
 		"ovulatory_disorder":       true,

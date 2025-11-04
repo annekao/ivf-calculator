@@ -1,5 +1,5 @@
 export type CalculateReason =
-  | 'male_factor'
+  | 'male_factor_infertility'
   | 'endometriosis'
   | 'tubal_factor'
   | 'ovulatory_disorder'
@@ -9,17 +9,22 @@ export type CalculateReason =
   | 'unexplained'
   | 'unknown'
 
-export type EggSource = 'own' | 'donor'
+export const eggSources = ['own', 'donor', ''] as const
+export type EggSource = typeof eggSources[number]
+
+export const priorIvfCyclesOptions = ["yes", "no", ''] as const
+export type PriorIvfCyclesOption = typeof priorIvfCyclesOptions[number]
 
 export interface CalculateRequest {
   age: number
   weightLbs: number
+  heightFt: number
   heightIn: number
-  priorIvfCycles: number
+  eggSource: EggSource
+  priorIvfCycles: PriorIvfCyclesOption
   priorPregnancies: number
   priorBirths: number
   reasons: CalculateReason[]
-  eggSource: EggSource
 }
 
 export interface CalculateResponse {
@@ -29,21 +34,23 @@ export interface CalculateResponse {
 export interface CalculateFormData {
   age: string
   weightLbs: string
+  heightFt: string
   heightIn: string
-  priorIvfCycles: string
+  eggSource: EggSource
+  priorIvfCycles: PriorIvfCyclesOption
   priorPregnancies: string
   priorBirths: string
   reasons: CalculateReason[]
-  eggSource: EggSource
 }
 
 export interface FormErrors {
   age?: string
   weightLbs?: string
+  heightFt?: string
   heightIn?: string
+  eggSource?: string
   priorIvfCycles?: string
   priorPregnancies?: string
   priorBirths?: string
   reasons?: string
-  eggSource?: string
 }

@@ -47,7 +47,7 @@ export default function CalculatorResult({
       <div className="mb-6">
         <div className="flex items-baseline gap-2">
           <span className="text-4xl font-bold text-blue-600">
-            {result.cumulativeChancePercent.toFixed(1)}%
+            {result.cumulativeChancePercent}%
           </span>
         </div>
       </div>

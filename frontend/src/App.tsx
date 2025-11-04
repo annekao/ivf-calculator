@@ -17,8 +17,9 @@ export default function App() {
       const request: CalculateRequest = {
         age: Number(formData.age),
         weightLbs: Number(formData.weightLbs),
+        heightFt: Number(formData.heightFt),
         heightIn: Number(formData.heightIn),
-        priorIvfCycles: Number(formData.priorIvfCycles),
+        priorIvfCycles: formData.priorIvfCycles,
         priorPregnancies: Number(formData.priorPregnancies),
         priorBirths: Number(formData.priorBirths),
         reasons: formData.reasons,

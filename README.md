@@ -106,10 +106,10 @@ Calculate IVF success probability.
   "age": 34,
   "weightLbs": 150,
   "heightIn": 66,
-  "priorIvfCycles": 0,
+  "priorIvfCycles": "false",
   "priorPregnancies": 0,
   "priorBirths": 0,
-  "reasons": ["male_factor", "unexplained"],
+  "reasons": ["male_factor_infertility", "unexplained"],
   "eggSource": "own"
 }
 ```
@@ -125,11 +125,11 @@ Calculate IVF success probability.
 - `age`: 20-50
 - `weightLbs`: 80-300
 - `heightIn`: 55-78
-- `priorIvfCycles`: 0-3
+- `eggSource`: "own" or "donor"
+- `priorIvfCycles`: "yes" or "no" required when using 'own' eggs
 - `priorPregnancies`: 0-2
 - `priorBirths`: 0-2
 - `reasons`: Array of valid reason strings (at least one required)
-- `eggSource`: "own" or "donor"
 
 ## Development
 
@@ -170,9 +170,6 @@ go test ./internal/calculator -v -run TestCalculate_OwnEggs_NoPriorIVF_UnknownRe
 # Scenario 3: Own eggs, prior IVF, known reason (tubal factor + diminished ovarian reserve)
 go test ./internal/calculator -v -run TestCalculate_OwnEggs_PriorIVF_KnownReason_Scenario3
 
-# Run comparison test (all scenarios together)
-go test ./internal/calculator -v -run TestAllScenarios_Comparison
-
 # Test formula loading
 go test ./internal/calculator -v -run TestFormulaLoading
 
@@ -196,14 +193,9 @@ The test suite includes:
 
 3. **Formula Loading Tests**: Verifies that formulas are successfully loaded from the CSV file
 
-4. **Result Validation**: Ensures calculated success rates are within expected bounds (0.1% - 95%)
-
-5. **Comparison Tests**: Runs all scenarios together to compare results
-
 Each test validates that:
-- The calculation produces a valid result
+- The calculation produces correct result
 - The correct formula is selected for the given patient parameters
-- Results are within reasonable probability bounds
 - The calculation uses actual CDC formula coefficients
 
 ## Notes
@@ -231,11 +223,13 @@ This project is a demonstration/take-home assessment and is not intended for pro
    - Removed "Test All Scenarios" as that was redundant
    - Liked how it tested the correct formula was used
    - Generally tests are not asserting, but instead throwing errors - unclear if this is Go convention or not
-- Cursor added an unnecessary "retrievals" (int) field which it reasoned as "The CDC formulas give per-cycle probability. 'Retrievals' computes cumulative probability across multiple cycles using P(at least one success) = 1 - (1 - p)^n."
-   - Asked to remove since it is not part of the product brief
 - Added unnecessary 'Notes' to CalculateResponse
    - Asked to remove since it is not part of the product brief
    - Kept as CalculateResponse as a struct even though it doesn't need to be since there is only one value
-
-
-
+- Hit the free tier monthly limit after the above
+- Fix BMI and age formula, remove redundant test checks and unnecessary code, remove mock calculator
+- Fix front-end/make it look better, clean up (i.e. string -> correct type)
+- Change Prior IVF cycles to a string since product brief says that it can be true/false/nan
+- Split out inches into feet and inches
+- Nest IVF cycles q under Egg q
+- Add # of live births constraint

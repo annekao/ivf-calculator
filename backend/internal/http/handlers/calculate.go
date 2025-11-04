@@ -29,7 +29,7 @@ func PostCalculate(c *gin.Context) {
 	// Validate the request
 	if errors := validation.ValidateCalculateRequest(req); len(errors) > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"errors": errors,
+			"details": errors,
 		})
 		return
 	}

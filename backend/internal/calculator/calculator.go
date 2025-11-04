@@ -16,10 +16,11 @@ import (
 type CalculateRequest struct {
 	Age              int      `json:"age" binding:"required"`
 	WeightLbs        int      `json:"weightLbs" binding:"required"`
-	HeightIn         int      `json:"heightIn" binding:"required"`
-	PriorIvfCycles   int      `json:"priorIvfCycles" binding:"required"`
-	PriorPregnancies int      `json:"priorPregnancies" binding:"required"`
-	PriorBirths      int      `json:"priorBirths" binding:"required"`
+	HeightFt         int      `json:"heightFt" binding:"required"`
+	HeightIn         int      `json:"heightIn" binding:"gte=0"`
+	PriorIvfCycles   string	  `json:"priorIvfCycles""`
+	PriorPregnancies int      `json:"priorPregnancies" binding:"gte=0"`
+	PriorBirths      int      `json:"priorBirths" binding:"gte=0"`
 	Reasons          []string `json:"reasons" binding:"required"`
 	EggSource        string   `json:"eggSource" binding:"required"`
 }
@@ -44,8 +45,8 @@ type Formula struct {
 	BMIPowerFactor              float64
 	TubalFactorTrue             float64
 	TubalFactorFalse            float64
-	MaleFactorTrue              float64
-	MaleFactorFalse             float64
+	MaleFactorInfertilityTrue   float64
+	MaleFactorInfertilityFalse  float64
 	EndometriosisTrue           float64
 	EndometriosisFalse          float64
 	OvulatoryDisorderTrue       float64
@@ -137,8 +138,8 @@ func loadFormulas() error {
 		formula.BMIPowerFactor = parseFloat(record[colIndex["formula_bmi_power_factor"]])
 		formula.TubalFactorTrue = parseFloat(record[colIndex["formula_tubal_factor_true_value"]])
 		formula.TubalFactorFalse = parseFloat(record[colIndex["formula_tubal_factor_false_value"]])
-		formula.MaleFactorTrue = parseFloat(record[colIndex["formula_male_factor_infertility_true_value"]])
-		formula.MaleFactorFalse = parseFloat(record[colIndex["formula_male_factor_infertility_false_value"]])
+		formula.MaleFactorInfertilityTrue = parseFloat(record[colIndex["formula_male_factor_infertility_true_value"]])
+		formula.MaleFactorInfertilityFalse = parseFloat(record[colIndex["formula_male_factor_infertility_false_value"]])
 		formula.EndometriosisTrue = parseFloat(record[colIndex["formula_endometriosis_true_value"]])
 		formula.EndometriosisFalse = parseFloat(record[colIndex["formula_endometriosis_false_value"]])
 		formula.OvulatoryDisorderTrue = parseFloat(record[colIndex["formula_ovulatory_disorder_true_value"]])
@@ -194,7 +195,7 @@ func getCSVPath() string {
 // findMatchingFormula selects the appropriate formula based on patient parameters
 func findMatchingFormula(req CalculateRequest) *Formula {
 	usingOwnEggs := req.EggSource == "own"
-	attemptedIVFPreviously := req.PriorIvfCycles > 0
+	attemptedIVFPreviously := req.PriorIvfCycles == "yes"
 	
 	// Determine if reason is known (not unexplained or unknown)
 	isReasonKnown := true
@@ -247,8 +248,8 @@ func findMatchingFormula(req CalculateRequest) *Formula {
 }
 
 // calculateBMI computes BMI from weight in pounds and height in inches
-func calculateBMI(weightLbs, heightIn int) float64 {
-	return float64(weightLbs) / math.Pow(float64(heightIn), 2.0) * 703
+func calculateBMI(weightLbs, heightFt int, heightIn int) float64 {
+	return float64(weightLbs) / math.Pow(float64(heightFt * 12 + heightIn), 2.0) * 703
 }
 
 // getPriorPregnanciesValue returns the coefficient for prior pregnancies
@@ -285,7 +286,7 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	}
 
 	// Calculate BMI
-	bmi := calculateBMI(req.WeightLbs, req.HeightIn)
+	bmi := calculateBMI(req.WeightLbs, req.HeightFt, req.HeightIn)
 	age := float64(req.Age)
 
 	// Calculate logit using the formula
@@ -305,8 +306,8 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	hasTubalFactor := contains(req.Reasons, "tubal_factor")
 	logit += ternary(hasTubalFactor, formula.TubalFactorTrue, formula.TubalFactorFalse)
 
-	hasMaleFactor := contains(req.Reasons, "male_factor")
-	logit += ternary(hasMaleFactor, formula.MaleFactorTrue, formula.MaleFactorFalse)
+	hasMaleFactorInfertility := contains(req.Reasons, "male_factor_infertility")
+	logit += ternary(hasMaleFactorInfertility, formula.MaleFactorInfertilityTrue, formula.MaleFactorInfertilityFalse)
 
 	hasEndometriosis := contains(req.Reasons, "endometriosis")
 	logit += ternary(hasEndometriosis, formula.EndometriosisTrue, formula.EndometriosisFalse)
@@ -333,7 +334,7 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	// Convert logit to probability
 	probability := 1.0 / (1.0 + math.Exp(-logit))
 
-	// Convert to percentage
+	// Convert to percentage rounded to 2 decimal places
 	chancePercent := math.Ceil(probability * 10000.0) / 100.0
 
 	return CalculateResponse{

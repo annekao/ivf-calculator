@@ -30,7 +30,7 @@ func TestCalculate_OwnEggs_NoPriorIVF_KnownReason_Scenario1(t *testing.T) {
 		Age:              32,
 		WeightLbs:        weightLbs,
 		HeightIn:         heightIn,
-		PriorIvfCycles:   0, // FALSE - did not previously attempt IVF
+		PriorIvfCycles:   "no",
 		PriorPregnancies: 1,
 		PriorBirths:      1,
 		Reasons: []string{
@@ -66,7 +66,7 @@ func TestCalculate_OwnEggs_NoPriorIVF_UnknownReason_Scenario2(t *testing.T) {
 		Age:              32,
 		WeightLbs:        weightLbs,
 		HeightIn:         heightIn,
-		PriorIvfCycles:   0, // FALSE - did not previously attempt IVF
+		PriorIvfCycles:   "no",
 		PriorPregnancies: 1,
 		PriorBirths:      1,
 		Reasons:   []string{"unknown"}, // Reason is unknown (not yet determined)
@@ -96,7 +96,7 @@ func TestCalculate_OwnEggs_PriorIVF_KnownReason_Scenario3(t *testing.T) {
 		Age:              32,
 		WeightLbs:        weightLbs,
 		HeightIn:         heightIn,
-		PriorIvfCycles:   1, // TRUE - previously attempted IVF (using 1 cycle)
+		PriorIvfCycles:   "yes",
 		PriorPregnancies: 1,
 		PriorBirths:      1,
 		Reasons: []string{
@@ -152,7 +152,7 @@ func TestFindMatchingFormula(t *testing.T) {
 	// Test scenario 1: Own eggs, no prior IVF, known reason
 	req1 := CalculateRequest{
 		EggSource:      "own",
-		PriorIvfCycles: 0,
+		PriorIvfCycles: "no",
 		Reasons:        []string{"endometriosis", "ovulatory_disorder"},
 	}
 
@@ -175,7 +175,7 @@ func TestFindMatchingFormula(t *testing.T) {
 	// Test scenario 2: Own eggs, no prior IVF, unknown reason
 	req2 := CalculateRequest{
 		EggSource:      "own",
-		PriorIvfCycles: 0,
+		PriorIvfCycles: "no",
 		Reasons:        []string{"unknown"},
 	}
 
@@ -198,7 +198,7 @@ func TestFindMatchingFormula(t *testing.T) {
 	// Test scenario 3: Own eggs, prior IVF, known reason
 	req3 := CalculateRequest{
 		EggSource:      "own",
-		PriorIvfCycles: 1,
+		PriorIvfCycles: "yes",
 		Reasons:        []string{"tubal_factor", "diminished_ovarian_reserve"},
 	}
 

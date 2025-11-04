@@ -6,16 +6,15 @@ import (
 )
 
 // Helper function to calculate weight and height from BMI
-// BMI = weight(kg) / (height(m))^2
-// For BMI = 22.8 and height = 66 inches (1.6764 m):
-// weight = 22.8 * 1.6764^2 = 64.0 kg ≈ 141 lbs
-func getWeightHeightForBMI(bmi float64) (weightLbs, heightIn int) {
-	// Using height of 66 inches (5'6") as standard
-	heightIn = 66
-	heightM := float64(heightIn) * 0.0254
-	weightKg := bmi * heightM * heightM
-	weightLbs = int(math.Round(weightKg / 0.453592))
-	return weightLbs, heightIn
+// BMI = weight(lbs)/703 * (height(in))^2
+// For BMI = 22.8 and height = 66 inches:
+// weight = 22.8 * 66^2 = 141 lbs
+func getWeightHeightForBMI(bmi float64) (weightLbs, heightFt, heightIn int) {
+	// Using height of 5'6" as standard
+	heightFt = 5
+	heightIn = 6
+	weightLbs = int(bmi/703.0 * math.Pow(float64(heightFt * 12 + heightIn), 2.0))
+	return weightLbs, heightFt, heightIn
 }
 
 func TestCalculate_OwnEggs_NoPriorIVF_KnownReason_Scenario1(t *testing.T) {
@@ -24,11 +23,12 @@ func TestCalculate_OwnEggs_NoPriorIVF_KnownReason_Scenario1(t *testing.T) {
 	// Endometriosis: TRUE, Ovulatory Disorder: TRUE
 	// Prior Pregnancies: 1, Prior Live Births: 1
 
-	weightLbs, heightIn := getWeightHeightForBMI(22.8)
+	weightLbs, heightFt, heightIn := getWeightHeightForBMI(22.8)
 
 	req := CalculateRequest{
 		Age:              32,
 		WeightLbs:        weightLbs,
+		HeightFt:		  heightFt,
 		HeightIn:         heightIn,
 		PriorIvfCycles:   "no",
 		PriorPregnancies: 1,
@@ -60,11 +60,12 @@ func TestCalculate_OwnEggs_NoPriorIVF_UnknownReason_Scenario2(t *testing.T) {
 	// we interpret this as "unknown" reason (reason not yet determined) to satisfy the
 	// requirement that at least one reason must be selected.
 
-	weightLbs, heightIn := getWeightHeightForBMI(22.8)
+	weightLbs, heightFt, heightIn := getWeightHeightForBMI(22.8)
 
 	req := CalculateRequest{
 		Age:              32,
 		WeightLbs:        weightLbs,
+		HeightFt:		  heightFt,
 		HeightIn:         heightIn,
 		PriorIvfCycles:   "no",
 		PriorPregnancies: 1,
@@ -90,11 +91,12 @@ func TestCalculate_OwnEggs_PriorIVF_KnownReason_Scenario3(t *testing.T) {
 	// Tubal Factor: TRUE, Diminished Ovarian Reserve: TRUE
 	// Prior Pregnancies: 1, Prior Live Births: 1
 
-	weightLbs, heightIn := getWeightHeightForBMI(22.8)
+	weightLbs, heightFt, heightIn := getWeightHeightForBMI(22.8)
 
 	req := CalculateRequest{
 		Age:              32,
 		WeightLbs:        weightLbs,
+		HeightFt:		  heightFt,
 		HeightIn:         heightIn,
 		PriorIvfCycles:   "yes",
 		PriorPregnancies: 1,

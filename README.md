@@ -208,7 +208,6 @@ Each test validates that:
 
 This project is a demonstration/take-home assessment and is not intended for production medical use.
 
-
 ## Non AI-generated notes 
 
 - Used Cursor and gave it the CDC website and CSV file to code a "simple" Go/React app (used plan mode)
@@ -223,13 +222,17 @@ This project is a demonstration/take-home assessment and is not intended for pro
    - Removed "Test All Scenarios" as that was redundant
    - Liked how it tested the correct formula was used
    - Generally tests are not asserting, but instead throwing errors - unclear if this is Go convention or not
-- Added unnecessary 'Notes' to CalculateResponse
+- Cursor added unnecessary 'Notes' to CalculateResponse
    - Asked to remove since it is not part of the product brief
    - Kept as CalculateResponse as a struct even though it doesn't need to be since there is only one value
 - Hit the free tier monthly limit after the above
 - Fix BMI and age formula, remove redundant test checks and unnecessary code, remove mock calculator
-- Fix front-end/make it look better, clean up (i.e. string -> correct type)
+- Fix front-end/make it look better (i.e. weird dark mode theme that didn't look right, use radio instead of select)
 - Change Prior IVF cycles to a string since product brief says that it can be true/false/nan
 - Split out inches into feet and inches
 - Nest IVF cycles q under Egg q
 - Add # of live births constraint
+- Set up toggling for unexplained/unknown reason
+- Removed Retrievals field (initially wasn't sure why it was added in, but then realized that it was part of the CDC calculation after submitting)
+   - Out of scope / no explicit instruction on how to calculate it so I didn't want to just go along with whatever Cursor said
+- Add more tests

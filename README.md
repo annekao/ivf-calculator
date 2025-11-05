@@ -106,11 +106,11 @@ Calculate IVF success probability.
   "age": 34,
   "weightLbs": 150,
   "heightIn": 66,
-  "priorIvfCycles": "false",
+  "eggSource": "own"
+  "priorIvfCycles": "no",
   "priorPregnancies": 0,
   "priorBirths": 0,
   "reasons": ["male_factor_infertility", "unexplained"],
-  "eggSource": "own"
 }
 ```
 

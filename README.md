@@ -105,7 +105,8 @@ Calculate IVF success probability.
 {
   "age": 34,
   "weightLbs": 150,
-  "heightIn": 66,
+  "heightFt": 5,
+  "heightIn": 6,
   "eggSource": "own"
   "priorIvfCycles": "no",
   "priorPregnancies": 0,
@@ -124,12 +125,13 @@ Calculate IVF success probability.
 **Validation Rules:**
 - `age`: 20-50
 - `weightLbs`: 80-300
-- `heightIn`: 55-78
+- `heightFt`: 4-7
+- `heightIn`: 0-12
 - `eggSource`: "own" or "donor"
 - `priorIvfCycles`: "yes" or "no" required when using 'own' eggs
 - `priorPregnancies`: 0-2
-- `priorBirths`: 0-2
-- `reasons`: Array of valid reason strings (at least one required)
+- `priorBirths`: 0-2, cannot be more than `priorPregnancies`
+- `reasons`: Array of valid reason strings (at least one required), `unexplained` or `unknown` cannot be combined with other reasons
 
 ## Development
 
@@ -168,6 +170,9 @@ The test suite includes:
    - Own eggs, no prior IVF attempts, known infertility reasons
    - Own eggs, no prior IVF attempts, unknown infertility reasons
    - Own eggs, prior IVF attempts, known infertility reasons
+   - Own eggs, prior IVF attempts, unknown infertility reasons
+   - Donor eggs, N/A IVF attempts, known infertility reasons
+   - Donor eggs, N/A IVF attempts, unknown infertility reasons
 
 2. **Formula Matching Tests**: Validates that the correct CDC formula is selected based on:
    - Egg source (own vs donor)
@@ -176,10 +181,13 @@ The test suite includes:
 
 3. **Formula Loading Tests**: Verifies that formulas are successfully loaded from the CSV file
 
+4. ** Validation Tests*: Verifies errors are thrown when input parameters are invalid
+
 Each test validates that:
 - The calculation produces correct result
 - The correct formula is selected for the given patient parameters
 - The calculation uses actual CDC formula coefficients
+- The input is valid
 
 ## Notes
 

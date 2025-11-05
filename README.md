@@ -157,24 +157,7 @@ The backend includes comprehensive tests for the calculator using CDC formulas. 
 ```bash
 cd backend
 go test ./internal/calculator -v
-```
-
-**Run specific test scenarios:**
-```bash
-# Scenario 1: Own eggs, no prior IVF, known reason (endometriosis + ovulatory disorder)
-go test ./internal/calculator -v -run TestCalculate_OwnEggs_NoPriorIVF_KnownReason_Scenario1
-
-# Scenario 2: Own eggs, no prior IVF, unknown reason
-go test ./internal/calculator -v -run TestCalculate_OwnEggs_NoPriorIVF_UnknownReason_Scenario2
-
-# Scenario 3: Own eggs, prior IVF, known reason (tubal factor + diminished ovarian reserve)
-go test ./internal/calculator -v -run TestCalculate_OwnEggs_PriorIVF_KnownReason_Scenario3
-
-# Test formula loading
-go test ./internal/calculator -v -run TestFormulaLoading
-
-# Test formula matching logic
-go test ./internal/calculator -v -run TestFindMatchingFormula
+go test ./internal/validation -v
 ```
 
 ### Test Coverage
@@ -236,9 +219,12 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - Removed Retrievals field (initially wasn't sure why it was added in, but then realized that it was part of the CDC calculation after submitting)
    - Out of scope / no explicit instruction on how to calculate it so I didn't want to just go along with whatever Cursor said
 - Add more tests since examples given only cover the first 3 formulas
+- Lots of edge case handling with what can be empty and acceptable values (pregnancies vs births)
+- ChatGPT test for validation/calculate_request.go
 
 Overall most manual coding was spent with edge cases / error-handling and getting the front-end dynamic to my liking.
 
 ### Things I would like to add or spend more time on
 - front-end / e2e testing
 - error-handling testing
+- more interesting / less bland UI

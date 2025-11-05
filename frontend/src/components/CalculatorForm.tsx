@@ -54,20 +54,20 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
       }
     }
     if (name === 'priorIvfCycles') {
-      if (!priorIvfCyclesOptions.includes(value as PriorIvfCyclesOption)) {
+      if ((formData.eggSource === 'own' && value === '') || !priorIvfCyclesOptions.includes(value as PriorIvfCyclesOption)) {
         return 'Please select "Yes" or "No"'
       }
     }
     if (name === 'priorPregnancies') {
       const pregnancies = Number(value)
-      if (isNaN(pregnancies) || pregnancies < 0 || pregnancies > 2) {
+      if (value === '' || pregnancies < 0 || pregnancies > 2) {
         return 'Prior pregnancies must be 2+, 1, or None'
       }
     }
     if (name === 'priorBirths') {
       const births = Number(value)
-      if (isNaN(births) || births < 0 || births > 2) {
-        return 'Prior births must be 2+, 1, or None'
+      if ((formData.priorPregnancies !== '0' && value === '')|| births < 0 || births > 2) {
+        return 'Required'
       }
     }
     if (name === 'reasons') {
@@ -93,7 +93,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
 
   const handlePregnancies = (value: string) => {
     handleChange('priorPregnancies', value)
-    if (value === '0' || (value === '1' && formData.priorBirths === '2')) {
+    if ((value === '0' || (value === '1' && formData.priorBirths === '2')) && formData.priorBirths !== '') {
       handleChange('priorBirths', '')
     }
   }
@@ -303,9 +303,9 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
         </label>
         <div className="space-y-2">
           {reasons.map((reason) => (
-            <div>
+            <div key={reason.value}>
               {reason.or && <div className="mb-2">(or)</div>}
-              <label key={reason.value} className="flex items-center">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
                   checked={formData.reasons.includes(reason.value)}

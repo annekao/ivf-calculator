@@ -2,6 +2,7 @@ package validation
 
 import (
 	"ivf-calculator-backend/internal/calculator"
+	"slices"
 )
 
 // ValidateCalculateRequest validates the calculate request and returns errors if any
@@ -24,20 +25,6 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 		errors["heightIn"] = "must be between 0 and 12"
 	}
 
-	if req.PriorPregnancies < 0 || req.PriorPregnancies > 2 {
-		errors["priorPregnancies"] = "must be 0, 1, or 2+"
-	}
-
-	if req.PriorBirths < 0 || req.PriorBirths > 2 {
-		errors["priorBirths"] = "must be 0, 1, or 2+"
-	}
-
-	if req.PriorBirths > req.PriorPregnancies {
-		if (errors["priorBirths"] != "") {
-			errors["priorBirths"] += "; "
-		}
-		errors["priorBirths"] += "cannot exceed the number of prior pregnancies (even in the case of twins)"
-	}
 
 	if req.EggSource != "own" && req.EggSource != "donor" {
 		errors["eggSource"] = "must be 'own' or 'donor'"
@@ -47,15 +34,32 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 		errors["priorIvfCycles"] = "must be 'yes' or 'no' when planning to use 'own' eggs"
 	}
 
+	validatePregnanciesBirths(req, errors)
+	validateReasons(req, errors)
+
+	return errors
+}
+
+func validatePregnanciesBirths(req calculator.CalculateRequest, errors map[string]string) {
+	if req.PriorPregnancies < 0 || req.PriorPregnancies > 2 {
+		errors["priorPregnancies"] = "must be 0, 1, or 2+"
+	}
+
+	if req.PriorBirths > req.PriorPregnancies {
+		errors["priorBirths"] += "cannot exceed the number of prior pregnancies (even in the case of twins)"
+	}
+}
+
+func validateReasons(req calculator.CalculateRequest, errors map[string]string) {
 	if len(req.Reasons) == 0 {
 		errors["reasons"] = "at least one reason must be selected"
 	}
 
-	if req.Reasons.contains("unexplained") && len(req.Reasons) != 1 {
+	if slices.Contains(req.Reasons, "unexplained") && len(req.Reasons) != 1 {
 		errors["reasons"] = "'Unexplained (Idiopathic) infertility' must be selected by itself"
 	}
 
-	if req.Reasons.contains("unknown") && len(req.Reasons) != 1 {
+	if slices.Contains(req.Reasons, "unknown") && len(req.Reasons) != 1 {
 		errors["reasons"] = "'I don't know/no reason' must be selected by itself"
 	}
 
@@ -77,6 +81,4 @@ func ValidateCalculateRequest(req calculator.CalculateRequest) map[string]string
 			break
 		}
 	}
-
-	return errors
 }

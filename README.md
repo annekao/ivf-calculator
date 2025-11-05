@@ -195,6 +195,8 @@ This project is a demonstration/take-home assessment and is not intended for pro
 
 - Used Cursor and gave it the CDC website and CSV file to code a "simple" Go/React app (used plan mode)
    - I *didn't* copy the README instructions directly. This was mostly out of curiosity to see how powerful Cursor is with minimal prompting.
+   - Gave me a couple different of stack options, went with what felt the most low weight and familiar
+   - After I moved the files, I unfortunately lost the history of this and plan mode doesn't auto-save
 - Removed docker since this is a take-home assignment and doesn't need to be deployed or put in a production environment
 - My first task was to try to spin up the app before checking the details of the code
    - Since I'm unfamiliar with Go, I relied on Cursor to resolve errors

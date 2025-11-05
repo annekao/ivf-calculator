@@ -232,10 +232,12 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - Add more tests since examples given only cover the first 3 formulas
 - Lots of edge case handling with what can be empty and acceptable values (pregnancies vs births)
 - ChatGPT test for validation/calculate_request.go
+- Needed to fix the unknown vs unexplained difference
 
 Overall most manual coding was spent with edge cases / error-handling and getting the front-end dynamic to my liking.
 
 ### Things I would like to add or spend more time on
+- more thorough calculator testing
 - front-end / e2e testing
 - error-handling testing
 - more interesting / less bland UI

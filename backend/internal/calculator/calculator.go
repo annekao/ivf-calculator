@@ -196,22 +196,7 @@ func getCSVPath() string {
 func findMatchingFormula(req CalculateRequest) *Formula {
 	usingOwnEggs := req.EggSource == "own"
 	attemptedIVFPreviously := req.PriorIvfCycles == "yes"
-	
-	// Determine if reason is known (not unexplained or unknown)
-	isReasonKnown := true
-	hasUnexplainedOrUnknown := false
-	for _, reason := range req.Reasons {
-		if reason == "unexplained" || reason == "unknown" {
-			hasUnexplainedOrUnknown = true
-		}
-	}
-	// If only unexplained/unknown, then reason is not known
-	if hasUnexplainedOrUnknown && len(req.Reasons) == 1 {
-		isReasonKnown = false
-	} else if hasUnexplainedOrUnknown {
-		// Mixed: if it's only unexplained/unknown, treat as unknown, otherwise known
-		isReasonKnown = true
-	}
+	isReasonKnown := !contains(req.Reasons, "unknown")
 
 	for i := range formulas {
 		f := &formulas[i]
@@ -324,7 +309,7 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	hasOther := contains(req.Reasons, "other")
 	logit += ternary(hasOther, formula.OtherReasonTrue, formula.OtherReasonFalse)
 
-	hasUnexplained := contains(req.Reasons, "unexplained") || contains(req.Reasons, "unknown")
+	hasUnexplained := contains(req.Reasons, "unexplained")
 	logit += ternary(hasUnexplained, formula.UnexplainedInfertilityTrue, formula.UnexplainedInfertilityFalse)
 
 	// Prior pregnancies and births

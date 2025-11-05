@@ -354,7 +354,7 @@ func TestFindMatchingFormula5(t *testing.T) {
 	req := CalculateRequest{
 		EggSource:      "donor",
 		PriorIvfCycles: "yes",
-		Reasons:        []string{"uterine_factor"},
+		Reasons:        []string{"unexplained"},
 	}
 
 	formula5 := findMatchingFormula(req)

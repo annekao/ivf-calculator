@@ -111,14 +111,14 @@ Calculate IVF success probability.
   "priorIvfCycles": "no",
   "priorPregnancies": 0,
   "priorBirths": 0,
-  "reasons": ["male_factor_infertility", "unexplained"],
+  "reasons": ["male_factor_infertility"],
 }
 ```
 
 **Response:**
 ```json
 {
-  "cumulativeChancePercent": 37.5
+  "cumulativeChancePercent": 51.32
 }
 ```
 

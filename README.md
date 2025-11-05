@@ -201,6 +201,7 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - My first task was to try to spin up the app before checking the details of the code
    - Since I'm unfamiliar with Go, I relied on Cursor to resolve errors
    - 1 circular dependency error later and the app is up and running!
+     <img width="552" height="689" alt="Screenshot 2025-10-31 at 3 36 26 PM" src="https://github.com/user-attachments/assets/415a6665-94ce-45fc-a758-f99f38d37d77" />
 - Type error coming from endpoint, shifted gears to having Cursor write tests given the 3 examples in the README without giving it the expected answers
    - Specific tests are not precise, just vaguely checks if its within "bounds"
    - Tests had a lot of fluff and logging that I ended up removing since it's not realistically something I would deploy (i.e. checking if it's between 0 and 100)

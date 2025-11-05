@@ -317,7 +317,7 @@ func Calculate(req CalculateRequest) CalculateResponse {
 	logit += formula.getPriorLiveBirthsValue(req.PriorBirths)
 
 	// Convert logit to probability
-	probability := 1.0 / (1.0 + math.Exp(-logit))
+	probability :=  math.Exp(logit) / (1.0 + math.Exp(logit))
 
 	// Convert to percentage rounded to 2 decimal places
 	chancePercent := math.Ceil(probability * 10000.0) / 100.0

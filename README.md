@@ -231,3 +231,4 @@ Overall most manual coding was spent with edge cases / error-handling and gettin
 - front-end / e2e testing
 - error-handling testing
 - more interesting / less bland UI
+- separate Formula loading from the Calculator 

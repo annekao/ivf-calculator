@@ -228,7 +228,7 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - Hit the free tier monthly limit after the above
 - Fix BMI and age formula, remove redundant test checks and unnecessary code, remove mock calculator
 - Fix front-end/make it look better (i.e. weird dark mode theme that didn't look right, use radio instead of select)
-- Change Prior IVF cycles to a string since product brief says that it can be true/false/nan
+- Change Prior IVF cycles from number to string since product brief says that it can be true/false/nan
 - Split out inches into feet and inches
 - Nest IVF cycles q under Egg q
 - Add # of live births constraint / toggling of available options
@@ -236,6 +236,8 @@ This project is a demonstration/take-home assessment and is not intended for pro
 - Removed Retrievals field (initially wasn't sure why it was added in, but then realized that it was part of the CDC calculation after submitting)
    - Out of scope / no explicit instruction on how to calculate it so I didn't want to just go along with whatever Cursor said
 - Add more tests since examples given only cover the first 3 formulas
+
+Overall most manual coding was spent with edge cases / error-handling and getting the front-end dynamic to my liking.
 
 ### Things I would like to add or spend more time on
 - front-end / e2e testing

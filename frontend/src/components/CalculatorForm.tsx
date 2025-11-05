@@ -84,6 +84,20 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
     setErrors((prev) => ({ ...prev, [name]: error }))
   }
 
+  const handleEggSource = (value: string) => {
+    handleChange('eggSource', value)
+    if (value === 'donor') {
+      handleChange('priorIvfCycles', '')
+    }
+  }
+
+  const handlePregnancies = (value: string) => {
+    handleChange('priorPregnancies', value)
+    if (value === '0' || (value === '1' && formData.priorBirths === '2')) {
+      handleChange('priorBirths', '')
+    }
+  }
+
   const handleReasonToggle = (reason: CalculateReason, or?: boolean) => {
     let newReasons
     if (or) {
@@ -140,6 +154,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
           id="age"
           min="20"
           max="50"
+          placeholder="Enter age between 20 and 50 years"
           value={formData.age}
           onChange={(e) => handleChange('age', e.target.value)}
           className={`w-full px-3 py-2 border rounded-md ${errors.age ? 'border-red-500' : 'border-gray-300'}`}
@@ -156,6 +171,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
           id="weightLbs"
           min="80"
           max="300"
+          placeholder="Enter weight between 80-300 lbs"
           value={formData.weightLbs}
           onChange={(e) => handleChange('weightLbs', e.target.value)}
           className={`w-full px-3 py-2 border rounded-md ${errors.weightLbs ? 'border-red-500' : 'border-gray-300'}`}
@@ -172,7 +188,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
               id="heightFeet"
               min="4"
               max="6"
-              placeholder="Feet"
+              placeholder="feet"
               value={formData.heightFt}
               onChange={(e) => handleChange('heightFt', e.target.value)}
               className={`w-full px-3 py-2 border rounded-md ${errors.heightFt ? 'border-red-500' : 'border-gray-300'}`}
@@ -185,7 +201,7 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
               id="heightInches"
               min="0"
               max="11"
-              placeholder="Inches"
+              placeholder="inches"
               value={formData.heightIn}
               onChange={(e) => handleChange('heightIn', e.target.value)}
               className={`w-full px-3 py-2 border rounded-md ${errors.heightIn ? 'border-red-500' : 'border-gray-300'}`}
@@ -202,11 +218,11 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
         </label>
         <div className="space-x-5 flex">
           <label className="flex items-center">
-            <input type="radio" id="eggSourceOwn" name="eggSource" value="own" checked={formData.eggSource === 'own'} onChange={(e) => handleChange('eggSource', e.target.value)} className="mr-2" />
+            <input type="radio" id="eggSourceOwn" name="eggSource" value="own" checked={formData.eggSource === 'own'} onChange={(e) => handleEggSource(e.target.value)} className="mr-2" />
             <span className="text-sm">My own eggs</span>
           </label>
           <label className="flex items-center">
-            <input type="radio" id="eggSourceDonor" name="eggSource" value="donor" checked={formData.eggSource === 'donor'} onChange={(e) => handleChange('eggSource', e.target.value)} className="mr-2" />
+            <input type="radio" id="eggSourceDonor" name="eggSource" value="donor" checked={formData.eggSource === 'donor'} onChange={(e) => handleEggSource(e.target.value)} className="mr-2" />
             <span className="text-sm">Donor eggs</span>
           </label>
         </div>
@@ -238,15 +254,15 @@ export default function CalculatorForm({ onSubmit, isSubmitting = false }: Calcu
         </label>
         <div className="space-x-5 flex">
           <label className="flex items-center">
-            <input type="radio" id="priorPregnancies2" name="priorPregnancies" value="2" checked={formData.priorPregnancies === '2'} onChange={(e) => handleChange('priorPregnancies', e.target.value)} className="mr-2" />
+            <input type="radio" id="priorPregnancies2" name="priorPregnancies" value="2" checked={formData.priorPregnancies === '2'} onChange={(e) => handlePregnancies(e.target.value)} className="mr-2" />
             <span className="text-sm">2 or more</span>
           </label>
           <label className="flex items-center">
-            <input type="radio" id="priorPregnancies1" name="priorPregnancies" value="1" checked={formData.priorPregnancies === '1'} onChange={(e) => handleChange('priorPregnancies', e.target.value)} className="mr-2" />
+            <input type="radio" id="priorPregnancies1" name="priorPregnancies" value="1" checked={formData.priorPregnancies === '1'} onChange={(e) => handlePregnancies(e.target.value)} className="mr-2" />
             <span className="text-sm">1</span>
           </label>
           <label className="flex items-center">
-            <input type="radio" id="priorPregnancies0" name="priorPregnancies" value="0" checked={formData.priorPregnancies === '0'} onChange={(e) => handleChange('priorPregnancies', e.target.value)} className="mr-2" />
+            <input type="radio" id="priorPregnancies0" name="priorPregnancies" value="0" checked={formData.priorPregnancies === '0'} onChange={(e) => handlePregnancies(e.target.value)} className="mr-2" />
             <span className="text-sm">None</span>
           </label>
         </div>
